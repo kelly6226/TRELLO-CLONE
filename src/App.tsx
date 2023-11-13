@@ -1,9 +1,26 @@
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "react-beautiful-dnd";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { todoState } from "./atoms";
+
+const toDos = ["a", "b", "c", "d", "e", "f"];
 
 function App() {
-  const onDragEnd = () => {};
-  const toDos = ["a", "b", "c", "d", "e", "f"];
+  const [toDos, setToDos] = useRecoilState(todoState);
+
+  // 드래그가 끝났을때 실행되는 함수
+
+  /*
+    toDos를 가지고 우리가 진행할 2가지 단계
+    1. array로부터 source.index(최근에 움직인 item의 index)를 지우기
+    2. destination의 index를 확인해서 해당 index에 우리가 방금 삭제한것을 추가하기
+  */
+  const onDragEnd = ({ destination, source }: DropResult) => {};
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
