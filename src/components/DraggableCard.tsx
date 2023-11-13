@@ -30,4 +30,4 @@ const Card = styled.div`
   background-color: ${(props) => props.theme.cardColor};
 `;
 
-export default DraggableCard;
+export default React.memo(DraggableCard);
