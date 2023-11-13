@@ -7,6 +7,7 @@ import {
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { todoState } from "./atoms";
+import DraggableCard from "./components/DraggableCard";
 
 const toDos = ["a", "b", "c", "d", "e", "f"];
 
@@ -20,7 +21,20 @@ function App() {
     1. array로부터 source.index(최근에 움직인 item의 index)를 지우기
     2. destination의 index를 확인해서 해당 index에 우리가 방금 삭제한것을 추가하기
   */
-  const onDragEnd = ({ destination, source }: DropResult) => {};
+  const onDragEnd = ({ destination, source }: DropResult) => {
+    if (!destination) return;
+
+    setToDos((oldToDos) => {
+      const copyToDos = [...oldToDos];
+      // 1) source.index에서 item 삭제하기
+      //source.index에서는 우리에게 array에서 우리가 움직이고 싶은 item이 어디에 有는지 알려줌
+      copyToDos.splice(source.index, 1);
+
+      // 2) destination.index로 item을 다시 돌려주기
+      copyToDos.splice(destination?.index, 0, toDos[source.index]);
+      return copyToDos;
+    });
+  };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -30,17 +44,7 @@ function App() {
             {(magic) => (
               <Board ref={magic.innerRef} {...magic.droppableProps}>
                 {toDos.map((toDo, index) => (
-                  <Draggable draggableId={toDo} index={index}>
-                    {(magic) => (
-                      <Card
-                        ref={magic.innerRef}
-                        {...magic.dragHandleProps}
-                        {...magic.draggableProps}
-                      >
-                        {toDo}
-                      </Card>
-                    )}
-                  </Draggable>
+                  <DraggableCard key={toDo} index={index} toDo={toDo} />
                 ))}
                 {magic.placeholder}
               </Board>
@@ -74,13 +78,6 @@ const Board = styled.div`
   background-color: ${(props) => props.theme.boardColor};
   border-radius: 5px;
   min-height: 200px;
-`;
-
-const Card = styled.div`
-  border-radius: 5px;
-  margin-bottom: 5px;
-  padding: 10px 10px;
-  background-color: ${(props) => props.theme.cardColor};
 `;
 
 export default App;
